@@ -1,81 +1,101 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import CakeList from "../components/CakeList";
-import { getCakes } from "../api/cakes";
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import CakeList from "../components/CakeList"; // Adjust the import path as necessary
 import { Cake } from "../common/types";
-
-// Mock the API call
-jest.mock("../api/cakes");
 
 describe("CakeList", () => {
   const mockCakes: Cake[] = [
     {
-      _id: "123",
+      _id: "1",
       name: "Chocolate Cake",
-      comment: "love this cake",
+      imageUrl: "http://example.com/chocolate-cake.jpg",
+      comment: "Delicious chocolate cake.",
       yumFactor: 5,
-      imageUrl: "http://example.com/chocolate.jpg",
     },
     {
-      _id: "456",
+      _id: "2",
       name: "Vanilla Cake",
-      comment: "love this cake",
-      yumFactor: 5,
-      imageUrl: "http://example.com/vanilla.jpg",
+      imageUrl: "http://example.com/vanilla-cake.jpg",
+      comment: "Tasty vanilla cake.",
+      yumFactor: 4,
     },
   ];
 
-  const mockHandleDelete = jest.fn();
-  const mockHandleOpenUpdate = jest.fn();
+  const handleDelete = jest.fn();
+  const handleOpenUpdate = jest.fn();
 
   beforeEach(() => {
-    // Clear all mocks before each test
-    jest.clearAllMocks();
+    jest.clearAllMocks(); // Clear mock calls before each test
   });
 
-  test("renders list of cakes", async () => {
+  test("renders a list of cakes", () => {
     render(
       <CakeList
         cakes={mockCakes}
-        handleDelete={mockHandleDelete}
-        handleOpenUpdate={mockHandleOpenUpdate}
+        handleDelete={handleDelete}
+        handleOpenUpdate={handleOpenUpdate}
       />
     );
 
-    // Check if the loading state is handled (optional, depending on your implementation)
-    expect(screen.getByText("Yummy Cakes")).toBeInTheDocument();
-
-    // Wait for the cakes to be loaded
-    await waitFor(() => {
-      expect(screen.getByText("Chocolate Cake")).toBeInTheDocument();
-      expect(screen.getByText("Vanilla Cake")).toBeInTheDocument();
-    });
-
-    // Check if images are rendered
-    const images = screen.getAllByRole("img");
-    expect(images).toHaveLength(2);
-    expect(images[0]).toHaveAttribute(
-      "src",
-      "http://example.com/chocolate.jpg"
-    );
-    expect(images[1]).toHaveAttribute("src", "http://example.com/vanilla.jpg");
+    // Check if cakes are rendered
+    expect(screen.getByText("Chocolate Cake")).toBeInTheDocument();
+    expect(screen.getByText("Delicious chocolate cake.")).toBeInTheDocument();
+    expect(screen.getByText("Vanilla Cake")).toBeInTheDocument();
+    expect(screen.getByText("Tasty vanilla cake.")).toBeInTheDocument();
   });
 
-  test("handles empty cake list", async () => {
+  test("calls handleOpenUpdate when Update button is clicked", () => {
     render(
       <CakeList
-        cakes={[]}
-        handleDelete={mockHandleDelete}
-        handleOpenUpdate={mockHandleOpenUpdate}
+        cakes={mockCakes}
+        handleDelete={handleDelete}
+        handleOpenUpdate={handleOpenUpdate}
       />
     );
 
-    // Wait for the component to finish rendering
-    await waitFor(() => {
-      expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
-    });
+    // Simulate clicking the Update button for the first cake
+    fireEvent.click(screen.getAllByText("Update")[0]);
 
-    // The heading should still be there
-    expect(screen.getByText("Yummy Cakes")).toBeInTheDocument();
+    expect(handleOpenUpdate).toHaveBeenCalledWith(mockCakes[0]);
+  });
+
+  test("calls handleDelete when Delete button is clicked", () => {
+    render(
+      <CakeList
+        cakes={mockCakes}
+        handleDelete={handleDelete}
+        handleOpenUpdate={handleOpenUpdate}
+      />
+    );
+
+    // Simulate clicking the Delete button for the second cake
+    fireEvent.click(screen.getAllByText("Delete")[1]);
+
+    expect(handleDelete).toHaveBeenCalledWith(mockCakes[1]._id);
+  });
+
+  test("fallback image is used on image error", () => {
+    // Here we can simulate an error in loading the image.
+    const { container } = render(
+      <CakeList
+        cakes={[
+          {
+            _id: "3",
+            name: "Red Velvet Cake",
+            imageUrl: "invalid-url.jpg", // Invalid URL to trigger image error
+            comment: "Lovely red velvet cake.",
+            yumFactor: 5,
+          },
+        ]}
+        handleDelete={handleDelete}
+        handleOpenUpdate={handleOpenUpdate}
+      />
+    );
+
+    // Simulate image error
+    const img = container.querySelector("img");
+    fireEvent.error(img!);
+
+    expect(img).toHaveAttribute("src", "./public/logo512.png"); // Expect fallback image
   });
 });

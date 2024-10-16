@@ -22,7 +22,7 @@ type CakeListProps = {
 const CakeList = ({ cakes, handleDelete, handleOpenUpdate }: CakeListProps) => {
   // Handle image fallback when it doesn't load
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    (e.target as HTMLImageElement).src = "/path-to-default-image.jpg"; // Fallback image URL
+    (e.target as HTMLImageElement).src = "./public/logo512.png"; // Fallback image URL
   };
   return (
     <Grid container spacing={2} direction="row" wrap="nowrap">

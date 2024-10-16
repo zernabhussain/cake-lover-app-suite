@@ -57,7 +57,12 @@ const CakeForm = ({
       onSubmit={handleSubmit}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography
+        data-testid="title-heading"
+        variant="h4"
+        align="center"
+        gutterBottom
+      >
         {isUpdateMode ? "Update Cake" : "Add a New Cake"}
       </Typography>
 
