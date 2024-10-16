@@ -35,7 +35,7 @@ Before you begin, ensure you have the following installed on your machine:
 
 1. **Node.js** (v20.x or higher) - [Download and install Node.js](https://nodejs.org/en/download/)
 2. **npm** - Comes bundled with Node.js (version 10.x or higher).
-3. A backend server running (refer to the [backend repository](backend/README.md) for setting up the API).
+3. A backend server running (refer to the [backend repository](../backend/README.md) for setting up the API).
 
 ### Installation
 
