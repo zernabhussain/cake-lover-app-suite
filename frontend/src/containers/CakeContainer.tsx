@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCakes, deleteCake } from "../api/cakes"; // Add updateCake API
+import { getCakes, deleteCake } from "../api/cakes";
 import CakeForm from "../components/CakeForm";
 import { Typography, Modal, Box } from "@mui/material";
 
@@ -42,7 +42,6 @@ const CakeContainer = () => {
     fetchCakes();
   }, []);
 
-  // Optimistic UI update for deletion
   const handleDelete = async (id: string) => {
     const updatedCakes = cakes.filter((cake) => cake._id !== id); // Remove cake from UI immediately
     setCakes(updatedCakes);

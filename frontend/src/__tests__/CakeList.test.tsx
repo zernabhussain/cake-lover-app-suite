@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import CakeList from "../components/CakeList"; // Adjust the import path as necessary
+import CakeList from "../components/CakeList";
 import { Cake } from "../common/types";
 
 describe("CakeList", () => {
